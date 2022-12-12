@@ -57,12 +57,16 @@ A PPP may be postponed if either the time of implementation is not right or the 
 
 ### PPP Categories
 When opening a PPP and filling out the template you have to determine which category the PPP falls under. Below you can find the defined categories.
+
 **Runtime Environment**
 * Changes to Host API, Runtime API or other properties of the WASM environment
+
 **Consensus Algorithms**
 * Changes to block production or finality algorithms
+
 **Networking**
 * Changes to the networking stack and protocols
+
 **Parachain Logic**
 * Changes to the availability and validity algorithm, cross chain messaging or other related protocols
 
