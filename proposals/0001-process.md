@@ -1,12 +1,12 @@
 ---
-title: Polkadot Protocol Proposal
-number: 1
-status: proposed
-authors:
+Title: Polkadot Protocol Proposal
+Number: 1
+Status: Enacted
+Authors:
   - Joyce Siqueira
   - Florian Franzen
-created: 2022-12-05
-category: process
+Created: 2022-12-05
+Category: Process
 ---
 
 ## Summary
