@@ -32,12 +32,12 @@ Put care into the details: PPPs that do not present convincing motivation, demon
 Build consensus and integrate feedback in the discussion thread. PPPs that have broad support are much more likely to make progress than those that don't receive any comments.
 If the proposal receives non-trivial interest from community members and generally positive feedback, you can prepare a Pull Request:
 1. Fork this repo.
-1. Create your proposal as proposed-ppp/0000-my-feature.md (where "my-feature" is descriptive. Don't assign a PPP number yet).
+2. Create your proposal based on the official template as `proposals/0000-my-feature.md` (where "my-feature" is descriptive. Don't assign a PPP number yet).
 3. Make sure to get the discussion going on and your PPP enters the review phase.
-1. A PPP can be modified based upon feedback from the maintainers and community. Significant modifications may trigger a new final comment period, which is 4 weeks.
-1. Once your PPP is accepted  the relevant section in the specification and any protocol implementations should be updated.
-1. After acceptance you can submit a pull request with the codebase of the proposed PPP. The implementation will again go through a review and adoption process.
-1. Once all major implementations integrated the proposed change into their codebase and the code was merged, the PPP should be updated to its final state, enacted.
+4. A PPP can be modified based upon feedback from the maintainers and community. Significant modifications may trigger a new final comment period, which is 4 weeks.
+5. Once your PPP is accepted  the relevant section in the specification and any protocol implementations should be updated.
+6. After acceptance you can submit a pull request with the codebase of the proposed PPP. The implementation will again go through a review and adoption process.
+7. Once all major implementations integrated the proposed change into their codebase and the code was merged, the PPP should be updated to its final state, enacted.
 
 A PPP may be rejected after public discussion has settled and comments have been made summarising the rationale for rejection. A member of the maintainers will then close the PPP.
 
