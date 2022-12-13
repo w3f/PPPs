@@ -6,6 +6,7 @@ Authors:
   - Joyce Siqueira
   - Florian Franzen
 Created: 2022-12-05
+Updated: 2022-12-13
 Category: Process
 ---
 
@@ -56,7 +57,7 @@ A PPP may be postponed if either the time of implementation is not right or the 
 
 
 ### PPP Categories
-When opening a PPP and filling out the template you have to determine which category the PPP falls under. Below you can find the defined categories.
+When opening a PPP and filling out the template you have to determine which category the PPP falls under. Below you can find the so far defined categories. We will continously extend the categories to meet the PPP's needs.
 
 **Runtime Environment**
 * Changes to Host API, Runtime API or other properties of the WASM environment
@@ -65,10 +66,8 @@ When opening a PPP and filling out the template you have to determine which cate
 * Changes to block production or finality algorithms
 
 **Networking**
-* Changes to the networking stack and protocols
+* Changes to the networking protocols
 
-**Parachain Logic**
-* Changes to the availability and validity algorithm, cross chain messaging or other related protocols
 
 ## Alternatives
 So far, major changes were not entirely discussed or thought thoroughly. With this PPP we believe that the community and maintainers would benefit from the level of detail of the PPP and the perspectives everyone involved can give. It would help the network and its ecosystem to grow and meet its needs.
