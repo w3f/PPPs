@@ -1,7 +1,7 @@
 ---
 Title: Proposal Template
 Number: 0
-Status: Draft
+Status: Proposed
 Authors:
   - Your Name
 Created: YYYY-MM-DD
