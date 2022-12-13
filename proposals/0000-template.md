@@ -1,13 +1,13 @@
 ---
-status: template
-title: PPP Template
-number: 0
-authors:
+Title: Proposal Template
+Number: 0
+Status: Draft
+Authors:
   - Your Name
-created: YYYY-MM-DD
-category: template
-requires:
-obsoletes:
+Created: YYYY-MM-DD
+Category: Template
+Requires:
+Replaces:
 --- 
 
 ## Summary
