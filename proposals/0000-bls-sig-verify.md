@@ -36,11 +36,13 @@ Note: BLS signature is a cryptographic primitive. BLS12-381 curve (different BLS
 BLS signatures are most commonly done over the BLS12-381 curve (e.g. see the ciphersuites in [IETF BLS draft](https://datatracker.ietf.org/doc/draft-irtf-cfrg-bls-signature/)), but could be done over other pairing-friendly curves as well.
 
 ## Security considerations
-The currently proposed solution doesn't perform subgroup checks.
+The currently proposed solution performs subgroup checks.
 They are optional upon point deserialization. The deserialization works as follows:
 1. Parse 48(resp. 96) bytes as a compressed point in G1(resp. G2), following [zcash serialization](https://docs.rs/bls12_381/latest/bls12_381/notes/serialization/index.html) format.
 2. Parsing will fail if the serialized data doesn't correspond to a point on the curve (i.e. its y and x coordinates don't match the curve equation y^2 = x^3 + Ax + B).
 3. (optional) Since the order of the curve BLS12-381 is not prime, not all points on the curve lie on the cryptographically secure prime-order subgroup G1(resp. G2). If the origin of the serialized data is trusted, this step can be skipped. Otherwise, the point **should** be checked to be in the subgroup G1(resp. G2) by performing a subgroup check, which is a somewhat expensive operation (~50 µs for G1, ~100 µs for G2 on an M1).
+
+By including the subgroup checks, we are making the verification slightly more expensive, but it prevents attacks leveraging the fact that the exponentiated point belongs to a non-prime order (composite) group. See [this paper](https://eprint.iacr.org/2015/247.pdf) for more details.
 
 ## Alternatives
 One alternatice would be to use the blst library: https://github.com/supranational/blst. This would introduce an additional dependency though, while arkworks is already planned to be supported anyway. Arkworks provides more flexibility (e.g. when BLS12-377 curve needs to be supported, this would not be possible with blst which is curve-specific).
@@ -48,4 +50,7 @@ One alternatice would be to use the blst library: https://github.com/supranation
 The other option would be to only expose the pairing method (as planned anyway) and leave "constructing" the verification to the runtime, which would only delegate the pairing computation to the host. This would be a bit more flexible, but is more error-prone for the user, and less efficient (e.g. (de)serialization needs to be done in the runtime, which can be slow, especially if the subgroup checks are required).
 
 ## Questions and open Discussions
-- Should we include subgroup checks in the verification? As a separate method (e.g. `bls12_381_bls_sig_verify_unchecked`)? 
+
+### Should we include subgroup checks in the verification? As a separate method (e.g. `bls12_381_bls_sig_verify_unchecked`)? 
+
+Looks like we should include subgroup checks.
