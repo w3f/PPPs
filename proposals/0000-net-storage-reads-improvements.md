@@ -44,9 +44,9 @@ The proposal is to modify this protocol in this way:
  }
  
 +message RemoteReadRequestV2 {
-+       required bytes block = 2;
-+       optional ChildTrieInfo child_trie_info = 3;  // Read from the main trie if missing.
-+       repeated Key keys = 6;
++       required bytes block = 1;
++       optional ChildTrieInfo child_trie_info = 2;  // Read from the main trie if missing.
++       repeated Key keys = 3;
 +}
 +
 +message ChildTrieInfo {
