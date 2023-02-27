@@ -24,11 +24,11 @@ These two new host functions behave the same way as `ext_storage_root_version_1`
 
 This extra parameter is problematic for two reasons:
 
-- It is redundant with the `state_version` field found in the runtime specification. This introduces a corner case: what if the parameter provided to `ext_storage_root_version_2` or `ext_default_child_storage_root_version_2` has a different value than the field in the runtime specification? There is no clear to answer to that question, as it is clearly not something that a runtime is ever supposed to do.
+- It is redundant with the `state_version` field found of the runtime specification. This introduces a corner case: what if the parameter provided to `ext_storage_root_version_2` or `ext_default_child_storage_root_version_2` has a different value than the field in the runtime specification? There is no clear to answer to that question, as it is clearly not something that a runtime is ever supposed to do.
 
 - The fact that the parameter is provided to the function meant to calculate the trie root hash gives the wrong impression that the provided `state_version` applies to the entire trie. This isn't the case, as each storage value of the trie has a `state_version` attached to it depending on when it was written, and a trie can contain a mix of version 0 and version 1 items. It would have been less confusing to provide this parameter to `ext_storage_set_version_1` and `ext_default_child_storage_set_version_1`.
 
-After discussion with some people, it seems that the introduction of these two host functions is indeed a mistake and was the result of a previous design experiment.
+After a previous discussion with the authors of the trie v1 feature, it seems that the introduction of these two host functions is indeed a mistake and was the result of a previous design experiment. This RFC comes from a desire to fix that small wart.
 
 ## Detailed Solution design
 The `ext_storage_root_version_2` and `ext_default_child_storage_root_version_2` host functions should be deprecated. Runtimes are encouraged to use `ext_storage_root_version_1` and `ext_default_child_storage_root_version_1` instead.
