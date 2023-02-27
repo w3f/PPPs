@@ -20,9 +20,9 @@ In the "trie v1" feature, each node of the trie that has a storage value now als
 The `state_version` field in the runtime specification indicates the version number to attach to the storage value whenever a write is performed.
 
 As part of the "trie v1" feature, two new host functions have been introduced: `ext_storage_root_version_2` and `ext_default_child_storage_root_version_2`.
-These two new host functions behave the same way as `ext_storage_root_version_1` and `ext_default_child_storage_root_version_1`, except that they accept an additional parameter containing the `state_version`.
+These two new host functions behave the same way as `ext_storage_root_version_1` and `ext_default_child_storage_root_version_1`, except that they accept an additional parameter containing the `state_version`. The value provided by the runtime must always be the same as the value of the `state_version` field of the runtime specification.
 
-This extra parameter is, however, problematic for two reasons:
+This extra parameter is problematic for two reasons:
 
 - It is redundant with the `state_version` field found in the runtime specification. This introduces a corner case: what if the parameter provided to `ext_storage_root_version_2` or `ext_default_child_storage_root_version_2` has a different value than the field in the runtime specification? There is no clear to answer to that question, as it is clearly not something that a runtime is ever supposed to do.
 
