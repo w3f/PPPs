@@ -29,6 +29,22 @@ with some `limit` multiple times and expecting `limit * number of calls` keys to
 While the actual result is that all calls remove exactly the same keys. They also don't get
 any information on how many keys got deleted in the state and how got deleted in the overlay.
 
+Let's say you have some lazy clean up functionality that can be triggered by
+sending a transaction and then reward the sender. With the current implementation of 
+`clear_prefix` you are only informed about the number of elements deleted in the state
+and if all elements with the given `prefix` are deleted. This means that if you
+include two transactions from different senders in one block, the second sender will
+be rewarded while actually not having helped to delete any keys. For sure you could 
+prevent this from happening ensuring that only one transaction is included per block. 
+However, it would be a much better experience if the runtime developer is able to 
+control `clear_prefix` more fine grained by providing the `cursor`. This would allow
+the runtime developer to include multiple of these transactions in one block, because
+each of them would be able to delete unique data in the state. The new `clear_prefix` 
+would also give information on the total number of deleted keys, which includes
+deletions from the state and the overlay, and total number of unique deletions
+in the state. It also provides the next `cursor` as return value or `None` if
+all keys with the `prefix` are deleted.
+
 ## Detailed Solution design
 
 Introduce the following new host functions:
@@ -66,7 +82,7 @@ struct MultiRemovalResults {
   pub maybe_cursor: Option<Vec<u8>>,
   /// The number of items removed from the state.
   ///
-  /// Keys are are already in the overlay do not count towards keys being removed from state. E.g. the overlay already has
+  /// Keys that are already in the overlay do not count towards keys being removed from state. E.g. the overlay already has
   /// key `AB`, the state also has `AB` and you are deleting with `prefix` `A`. `AB` would not be counted for `state`.
   pub state: u32,
   /// The number of unique keys removed, taking into account both the state and the overlay.
