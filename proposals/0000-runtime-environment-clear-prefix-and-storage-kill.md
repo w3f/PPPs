@@ -13,8 +13,8 @@ Replaces:
 ## Summary
 
 Give the runtime more fine grained control over the internals of `clear_prefix` and `storage_kill`. 
-We are proposing to introduce `ext_Storage_clear_prefix_version_3`, `ext_DefaultChildStorage_clear_prefix_version_3` 
-and `ext_DefaultChildStorage_storage_kill_version_3`. Notable changes are the introduction of a new 
+We are proposing to introduce `ext_storage_clear_prefix_version_3`, `ext_default_child_storage_clear_prefix_version_3` 
+and `ext_default_child_storage_storage_kill_version_3`. Notable changes are the introduction of a new 
 third parameter `maybe_cursor` and the change of the return value to `MultiRemovalResults`. 
 The `maybe_cursor` enables a runtime developer to start removing storage items from 
 a defined position. The new return value will give more details on how many items were 
@@ -34,9 +34,9 @@ any information on how many keys got deleted in the state and how got deleted in
 Introduce the following new host functions:
 
 ```rust
-fn ext_Storage_clear_prefix_version_3(prefix: u64, maybe_limit: u32, maybe_cursor: u64) -> u64;
-fn ext_DefaultChildStorage_clear_prefix_version_3(storage_key: u64, prefix: u64, maybe_limit: u32, maybe_cursor: u64) -> u64;
-fn ext_DefaultChildStorage_storage_kill_version_4(storage_key: u64, maybe_limit: u32, maybe_cursor: u64) -> u64;
+fn ext_storage_clear_prefix_version_3(prefix: u64, maybe_limit: u32, maybe_cursor: u64) -> u64;
+fn ext_default_child_storage_clear_prefix_version_3(storage_key: u64, prefix: u64, maybe_limit: u32, maybe_cursor: u64) -> u64;
+fn ext_default_child_storage_storage_kill_version_4(storage_key: u64, maybe_limit: u32, maybe_cursor: u64) -> u64;
 ```
 
 The following list explains the parameters and the return value of all functions above:
@@ -76,7 +76,7 @@ struct MultiRemovalResults {
 }
 ```
 
-### Implementation of `ext_Storage_clear_prefix_version_3`
+### Implementation of `ext_storage_clear_prefix_version_3`
 
 Clear keys from the state and the overlay of the currently modified keys that
 are starting with `prefix`.`maybe_limit` defines the maximum number of keys to
@@ -113,7 +113,7 @@ The overlay of currently modified keys looks like this (again only keys):
 | F |
 
 In the following we use `clear_prefix` as Rust wrapper around
-`ext_Storage_clear_prefix_version_3`. For simplicity we represent the
+`ext_storage_clear_prefix_version_3`. For simplicity we represent the
 `prefix` and `maybe_cursor` as string like literal.
 
 1. Call `clear_prefix("A", u32::max_value(), "")`:
@@ -155,14 +155,14 @@ Expected result:
 
 Keys deleted: `[ F ]`
 
-### Implementation of `ext_DefaultChildStorage_clear_prefix_version_3`
+### Implementation of `ext_default_child_storage_clear_prefix_version_3`
 
-Follows the exact same implementation as `ext_Storage_clear_prefix_version_3`,
+Follows the exact same implementation as `ext_storage_clear_prefix_version_3`,
 but does the operation on the child trie defined by `storage_key`.
 
-### Implementation of `ext_DefaultChildStorage_storage_kill_version_4`
+### Implementation of `ext_default_child_storage_storage_kill_version_4`
 
-Follows the exact same implementation as `ext_Storage_clear_prefix_version_3`,
+Follows the exact same implementation as `ext_storage_clear_prefix_version_3`,
 but does the operation on the child trie defined by `storage_key`. As purpose of
 this function is to delete the entire child trie, it doesn't take any `prefix`.
 
