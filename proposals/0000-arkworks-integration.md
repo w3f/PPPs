@@ -1,11 +1,11 @@
 ---
-Title: Proposal Template
+Title: Arkworks Integration
 Number: 0
 Status: Proposed
 Authors:
   - Achim Schneider<achim@parity.io>
-Created: YYYY-MM-DD
-Category: Template
+Created: 2023-13-03
+Category: Runtime Environment
 Requires:
 Replaces:
 --- 
