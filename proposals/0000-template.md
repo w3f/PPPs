@@ -11,8 +11,8 @@ Replaces:
 --- 
 
 ## Summary
- [Arkworks](http://arkworks.rs/) integration into Substrate. We provide Elliptic curves (bls12_381, bls12_377, ed_on_bls12_381, ed_on_bls12_77, bw6_761), were we replace the compute intense operations by host function calls in Substrate. We add those host function calls to `sp_io::elliptic_curves` and refer to the `arkworks` crate. 
-The curves live in https://github.com/paritytech/ark-substrate) and call into the host functions. To avoid point preparation of the elliptic curves in the runtime, we also partially fork the models `bls12` and `bw6` in [ark-substrate](https://github.com/paritytech/ark-substrate).
+ Proposal to merge https://github.com/paritytech/substrate/pull/13031 into Substrate. [Arkworks](http://arkworks.rs/) integration into Substrate. We provide Elliptic curves (bls12_381, bls12_377, ed_on_bls12_381, ed_on_bls12_77, bw6_761), were we replace the compute intense operations by host function calls in Substrate. We add those host function calls to `sp_io::elliptic_curves` and refer to the `arkworks` crate. 
+The curves live in https://github.com/paritytech/ark-substrate and call into the host functions. To avoid point preparation of the elliptic curves in the runtime, we also partially fork the models `bls12` and `bw6` in [ark-substrate](https://github.com/paritytech/ark-substrate).
 
 ## Motivation
 Usually cryptographic operations on elliptic curves are slow in WebAssembly. Replacing those operations by host functoin calls into binary code allows us to drastically improve the performace of the cryptographic tools which rely on those operations.
