@@ -47,6 +47,7 @@ The proposal is to modify this protocol in this way:
 +       required bytes block = 1;
 +       optional ChildTrieInfo child_trie_info = 2;  // Read from the main trie if missing.
 +       repeated Key keys = 3;
++       optional bytes onlyKeysAfter = 4;
 +}
 +
 +message ChildTrieInfo {
@@ -84,6 +85,9 @@ If `skipValue` is `true` for a `Key`, then the value associated with this key is
 
 If `includeDescendants` is `true` for a `Key`, then the replier must also include in the proof all keys that are descendant of the given key (in other words, its children, children of children, children of children of children, etc.). It must do so even if `key` itself doesn't have any storage value associated to it. The values of all of these descendants are replaced with their hashes if `skipValue` is `true`, similarly to `key` itself.
 
+The optional `onlyKeysAfter` field can provide a lower bound for the keys contained in the proof. The responder must not include in its proof any node whose key is inferior or equal to the value in `onlyKeysAfter`. If no `onlyKeysAfter` is provided, the response must start with the root node of the trie.
+In order for the logic of the `onlyKeysAfter` field to work properly, the proof generation must be deterministic. In other words, the response to a specific request (specifically the proof contained in the response) should always be the same no matter which peer is queried. In order for this to be the case, the response must always contain the keys in lexicographical order. No ordering was enforced before this proposal. After this proposal, a proof is invalid if it doesn't respect the order.
+
 For the purpose of this networking protocol, it should be considered as if the main trie contained an entry for each default child trie whose key is `concat(":child_storage:default:", child_trie_hash)` and whose value is equal to the trie root hash of that default child trie. This behavior is consistent with what the host functions observe when querying the storage. This behavior is present in the existing networking protocol, in other words this proposal doesn't change anything to the situation, but it is worth mentioning.
 
 ## Security considerations
@@ -91,7 +95,7 @@ The main security consideration concerns the size of replies and the resources n
 
 Implementers of the replier side should be careful to detect early on when a reply would exceed the maximum reply size, rather than inconditionally generate a reply, as this could take a very large amount of CPU, disk I/O, and memory. Existing implementations might currently be accidentally protected from such an attack thanks to the fact that requests have a maximum size, and thus that the list of keys in the query was bounded. After this proposal, this accidental protection would no longer exist.
 
-It is not possible for the querier to know in advance whether its query will lead to a reply that exceeds the maximum size. If the reply is too large, the querier should send a different, smaller request. While this is not an ideal solution, it is believed that this problem is rare enough that it's not worth making things more complicated in order to solve it. Ideal solution could include proofs that can be verified in a streaming way, or sending a partial proof whose remainder can be queried afterwards.
+It is not possible for the querier to know in advance whether its query will lead to a reply that exceeds the maximum size. If the reply is too large, the replier should send back a truncated proof. The querier should then send the same request, but with a value of `onlyKeysAfter` equal to the last key of the previous response. Because the proof generation is deterministic, additional requests can be sent either to the same peer or to a different one.
 
 ## Alternatives
 I don't really see any alternative way of solving the issues exposed.
