@@ -35,7 +35,7 @@ The following comparison table of benchmarking results should justify the introd
 
 | extrinsic                               |  arkworks(µs)[^1]  |ark-substrate(µs)[^2]|   speedup[^3]   |  dummy(µs)[^4]  |   wasm(µs)[^5]  |  native(µs)[^6] |
 | --------------------------------------- |  --------------- | --------------- | --------------- | --------------- | --------------- | --------------- |
-| groth16_verification (bls12_381)        |    23551.78      |    3548.19      |${\color{green}\bf 6.64 \boldsymbol{\times}}$|    5800.99      |                     |      4080       | 
+| groth16_verification (bls12_381)        |    23551.78      |    3548.19      |${\color{green}\bf 6.64 \boldsymbol{\times}}$|    5800.99      |                     |      3491.30    | 
 | bls12_381_pairing                       |    10402.36      |    1590.62      |${\color{green}\bf 6.54 \boldsymbol{\times}}$|    448.97       |                     |      1340       |
 | bls12_381_msm_g1, 10 arguments          |    7970.50       |    1122.22      |${\color{green}\bf 7.10 \boldsymbol{\times}}$|    87.63        |                     |      578.19     |
 | bls12_381_msm_g1, 1000 arguments        |    229069.53     |    35833.72     |${\color{green}\bf 6.39 \boldsymbol{\times}}$|    6486.63      |                     |      11010      |
