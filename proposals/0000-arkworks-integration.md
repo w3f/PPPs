@@ -1,5 +1,5 @@
 ---
-Title: Arkworks Integration
+Title: Elliptic Curve Host Functions
 Number: 0
 Status: Proposed
 Authors:
@@ -11,8 +11,7 @@ Replaces:
 --- 
 
 ## Summary
- Proposal to add host functions for [Arkworks](http://arkworks.rs/) to Polkadot. We provide Elliptic curves (bls12_381, bls12_377, ed_on_bls12_381, ed_on_bls12_77, bw6_761), were we replace the compute intense operations by host function calls. We add those host function calls to `sp_io::elliptic_curves` and refer to the `arkworks` crate. 
-The curves live in https://github.com/paritytech/ark-substrate and call into the host functions. To avoid point preparation of the elliptic curves in the runtime, we also partially fork the models `bls12` and `bw6` in [ark-substrate](https://github.com/paritytech/ark-substrate).
+ Proposal to add host functions for [Arkworks](http://arkworks.rs/) to Polkadot. We provide Elliptic curves (bls12_381, bls12_377, ed_on_bls12_381, ed_on_bls12_77, bw6_761), were we replace the compute intense operations by host function calls.
 
 ## Motivation
 Usually cryptographic operations on elliptic curves are slow in WebAssembly. Replacing those operations by host functoin calls into binary code allows us to drastically improve the performace of the cryptographic tools which rely on those operations.
@@ -21,6 +20,109 @@ Usually cryptographic operations on elliptic curves are slow in WebAssembly. Rep
 We implement host function calls into the underlying arithmetic operations on elliptic curves for `BLS12_377`, `BLS12_381`, `BW6_761`, `ED_ON_BLS12_377` and `ED_ON_BLS12_381` by host function calls.
 
 We introduce new host functions calls which are grouped under `elliptic_curves` in `/primitives/io/src/lib.rs`. Those host function calls receive serialized curve points of elliptic curves, deserialize them, call into native arkworks code to perform computations. Finally they serialize the result and return them as `Vec<u8>`.
+
+We add the following host functions:
+
+```rust
+/// Compute a multi Miller loop on bls12_381
+fn bls12_381_multi_miller_loop(a: Vec<Vec<u8>>, b: Vec<Vec<u8>>) -> Result<Vec<u8>, ()> 
+
+/// Compute a final exponentiation on bls12_381
+fn bls12_381_final_exponentiation(f12: Vec<u8>) -> Result<Vec<u8>, ()> 
+
+/// Compute a projective multiplication on G1 for bls12_381
+fn bls12_381_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute a projective multiplication on G1 for bls12_381
+fn bls12_381_mul_affine_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+
+/// Compute a projective multiplication on G2 for bls12_381
+fn bls12_381_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute a affine multiplication on G2 for bls12_381
+fn bls12_381_mul_affine_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute a msm on G1 for bls12_381
+fn bls12_381_msm_g1(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8>
+
+/// Compute a msm on G2 for bls12_381
+fn bls12_381_msm_g2(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8> 
+
+/// Compute a multi Miller loop for bls12_377
+fn bls12_377_multi_miller_loop(a: Vec<Vec<u8>>, b: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
+
+/// Compute a final exponentiation for bls12_377
+fn bls12_377_final_exponentiation(f12: Vec<u8>) -> Result<Vec<u8>, ()> 
+
+/// Compute a projective multiplication on G1 for bls12_377
+fn bls12_377_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute a affine multiplication on G1 for bls12_377
+fn bls12_377_mul_affine_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+
+/// Compute a projective multiplication on G2 for bls12_377
+fn bls12_377_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+
+/// Compute a affine multiplication on G2 for bls12_377
+fn bls12_377_mul_affine_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute a msm on G1 for bls12_377
+fn bls12_377_msm_g1(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8> 
+
+/// Compute a msm on G2 for bls12_377
+fn bls12_377_msm_g2(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8> 
+
+/// Compute a multi Miller loop on bw6_761
+fn bw6_761_multi_miller_loop(a: Vec<Vec<u8>>, b: Vec<Vec<u8>>) -> Result<Vec<u8>, ()> 
+
+/// Compute a final exponentiation on bw6_761
+fn bw6_761_final_exponentiation(f12: Vec<u8>) -> Result<Vec<u8>, ()> 
+
+/// Compute a projective multiplication on G1 for bw6_761
+fn bw6_761_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute a projective multiplication on G2 for bw6_761
+fn bw6_761_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+
+/// Compute a affine multiplication on G1 for bw6_761
+fn bw6_761_mul_affine_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute a affine multiplication on G2 for bw6_761
+fn bw6_761_mul_affine_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+
+/// Compute a msm on G1 for bw6_761
+fn bw6_761_msm_g1(bases: Vec<Vec<u8>>, bigints: Vec<Vec<u8>>) -> Vec<u8> 
+
+/// Compute a msm on G2 for bw6_761
+fn bw6_761_msm_g2(bases: Vec<Vec<u8>>, bigints: Vec<Vec<u8>>) -> Vec<u8> 
+
+/// Compute a short weierstrass affine multiplication on ed_on_bls12_381
+fn ed_on_bls12_381_sw_mul_affine(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute twisted edwards projective multiplication on ed_on_bls12_381
+fn ed_on_bls12_381_te_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+
+/// Compute twisted edwards affine multiplication on ed_on_bls12_381
+fn ed_on_bls12_381_te_mul_affine(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute short weierstrass projective multiplication on ed_on_bls12_381
+fn ed_on_bls12_381_sw_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+
+/// Compute twisted edwards msm on ed_on_bls12_381
+fn ed_on_bls12_381_te_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8>
+
+/// Compute short weierstrass msm on ed_on_bls12_381
+fn ed_on_bls12_381_sw_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8> 
+
+/// Compute affine multiplication on ed_on_bls12_377
+fn ed_on_bls12_377_mul_affine(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute projective multiplication on ed_on_bls12_377
+fn ed_on_bls12_377_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+
+/// Compute msm on ed_on_bls12_377
+fn ed_on_bls12_377_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8>
+```
 
 While the host-functions themself are implemented under `/primitives/io/src/lib.rs`, they call into their actual implementations which can be found in the `/primitives/io/arkworks` sub-crate.
 
