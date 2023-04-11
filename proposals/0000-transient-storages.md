@@ -44,31 +44,31 @@ Transient storage act as current state storage, but without a persistent backend
 This implies that the storage must support commiting and reverting transaction with `ext_storage_commit_transaction` or `ext_storage_rollback_transaction`.
 This transactional support is both at transient storage content and at transient storage definition (a delete transient storage will be restore on rollback).
 
-Btree and blob are using a specific `Mode`, either `drop` or `archive` passed respectively as the byte 0 or 1. When using `drop` the data will not be send from the runtime executor to the calling client. When using `archive` the committed state of the transient storage will be passed as a change set to the client calling runtime executor.
+Ordered map and blob are using a specific `Mode`, either `drop` or `archive` passed respectively as the byte 0 or 1. When using `drop` the data will not be send from the runtime executor to the calling client. When using `archive` the committed state of the transient storage will be passed as a change set to the client calling runtime executor.
 
 In archive mode it is the client that choose its strategy for storing the block transient storages final states.
 
 
-### Implementation of Btree storage
+### Implementation of ordered map storage
 
-- `ext_btree_storage_new` with parameters:
+- `ext_ordered_map_storage_new` with parameters:
 	- name : a pointer size to the name of the new transient storage. 
 	- mode : `Mode` as an u8 (either 0 `drop` or 1 `archive).
 No result.
 Allows using a transient storage for a given `name` and `mode`.
 If a transient storage already exists with the same `name`, it is overwritten.
 
-- `ext_btree_storage_exists` with parameters:
+- `ext_ordered_map_storage_exists` with parameters:
 	- name : a pointer size to the name of a transient storage.
 Result is a boolean indicating if transient storage was instantiated.
 
-- `ext_btree_storage_delete` with parameters:
+- `ext_ordered_map_storage_delete` with parameters:
 	- name : a pointer size to the name of a transient storage.
 Result true if a transient storage did exist and was removed, and false if no
 transient storage did exist.
 
 
-- `ext_btree_storage_clone` with parameters:
+- `ext_ordered_map_storage_clone` with parameters:
 	- name : a pointer size to the name of a transient storage to clone.
 	- target_name : a pointer size to the new transient storage to use.
 Result is a true if operation succeed and false if there was no storage at `name`.
@@ -77,7 +77,7 @@ If a transient storage is present at `target_name` it is overwritten.
 
 This operation cost is high, the implementation do not try to avoid copy.
 
-- `ext_btree_storage_rename` with parameters:
+- `ext_ordered_map_storage_rename` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- target_name : the new name to use.
 Result is a true if operation succeed and false if there was no storage at `name`.
@@ -91,33 +91,33 @@ If a transient storage is present at `target_name` it is overwritten.
 This operation cost is small, there should be no copy of storage content.
 
 
-- `ext_btree_storage_insert_item` with parameters:
+- `ext_ordered_map_storage_insert_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- key : a pointer size to the key of the content to insert.
 	- value : a pointer size to the value of the content to insert.
-Returns false if there is no btree storage defined for this `name`, true otherwhise (success).
+Returns false if there is no ordered_map storage defined for this `name`, true otherwhise (success).
 
 This insert a new key value content.
 If an item already exists for the `key` it is overwritten.
 
-- `ext_btree_storage_remove_item` with parameters:
+- `ext_ordered_map_storage_remove_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- key : a pointer size to the key of the content to insert.
 Returns true when a key and content where removed, false otherwhise.
 
 This attempts to remove a content at a given key.
 
-- `ext_btree_storage_contains_item` with parameters:
+- `ext_ordered_map_storage_contains_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- key : a pointer size to the key of the content to insert.
 Returns true when a key and content exists, false otherwhise.
 
-- `ext_btree_storage_get_item` with parameters:
+- `ext_ordered_map_storage_get_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- key : a pointer size to the key of the content to insert.
 Returns an optional bytes content containing the value associated with the given key.
 
-- `ext_btree_storage_read_item` with parameters:
+- `ext_ordered_map_storage_read_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- key : a pointer size to the key of the content to insert.
 	- `value_out` :  a pointer-size containing the buffer to which the value will be written to.
@@ -125,19 +125,19 @@ Returns an optional bytes content containing the value associated with the given
 Returns an optional size of content written in the buffer (None if the content associated with key is not found).
 The size written can only differ from the buffer size if there is not enough content to read.
 
-- `ext_btree_storage_len_item` with parameters:
+- `ext_ordered_map_storage_len_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- key : a pointer size to the key of the content to insert.
 Returns an optional size of value content when the key exists.
 
 
-- `ext_btree_storage_count` with parameters:
+- `ext_ordered_map_storage_count` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
-Returns an optinal u32 number of element currently in the btree.
+Returns an optional u32 number of element currently in the ordered map.
 This should be a small cost operation (implementation needs to maintain a count of content).
 
 
-- `ext_btree_storage_hash32_item` with parameters:
+- `ext_ordered_map_storage_hash32_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- key : a pointer size to the key of the content to insert.
 	- algorithm: `Hash32Algorithm` passed as a byte, 0 for Blake2b256.
@@ -145,43 +145,43 @@ Returns an optional 32 bytes buffer containing the hash of the value when the co
 
 This can be a costy on big value, but then it would be the blob usecase, therefore no caching of result is expecting from implementation.
 
-- `ext_btree_storage_root32_item` with parameters:
+- `ext_ordered_map_storage_root32_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- structure: `Root32Structure` passed as a byte, 0 for `SubstrateDefault` which is the same merkle trie implementation as the substrate trie.
 Returns an optional 32 bytes buffer containing the root hash for the current stae or nothing if there is no transient storage for the given name.
 
 This call is very costy. Implementation shall at least cache hash result when state did not change.
 
-- `ext_btree_storage_next_keys` with parameters:
+- `ext_ordered_map_storage_next_keys` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- key: a pointer size to the previously accessed key.
 	- count: a u32 indicating the maximum number of key to return.
 Returns a scale encoded optional sized array of keys (rust `Option<Vec<Vec<u8>>>`).
 
 
-- `ext_btree_storage_root32_dump` with parameters:
+- `ext_ordered_map_storage_root32_dump` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
-Returns an scale encoded optional vector of key value with all the key value content from the transient btree (in rust `Option<Vec<(Vec<u8>, Vec<u8>)>>`).
+Returns an scale encoded optional vector of key value with all the key value content from the transient ordered map (in rust `Option<Vec<(Vec<u8>, Vec<u8>)>>`).
 
-- `ext_btree_storage_root32_dump_hashed` with parameters:
+- `ext_ordered_map_storage_root32_dump_hashed` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
 	- algorithm: `Hash32Algorithm` passed as a byte, 0 for Blake2b256.
-Returns an scale encoded optional vector of key value with hash of key and hash of value from the transient btree (in rust `Option<Vec<([u8; 32], [u8; 32])>>`).
+Returns an scale encoded optional vector of key value with hash of key and hash of value from the transient ordered map (in rust `Option<Vec<([u8; 32], [u8; 32])>>`).
 
 ### Implementation of Blob storage
 
-If it sounds easy to use Btree storage to store a blob of bytes, a different api is defined to focus on managing larger bytes array efficiently.
+If it sounds easy to store a blob of byte as a single entry of an ordered map storage, a different api is defined to focus on managing larger bytes array efficiently.
 
 Internally blob storage is acting as an array of bytes chunk. This sets the granularity for transactional support. The chunk size is 256 bytes.
 
-Most of the api is working the same way as for the btree storage, please notice that `name` are isolated from btree transient `name`: a btree and
+Most of the api is working the same way as for the ordered map storage, please notice that `name` are isolated from ordered map `name`: a ordered map and
 a blob can use the same name without conflicts.
 
-- `ext_blob_storage_new`, same as `ext_btree_storage_new` for a blob. 
-- `ext_blob_storage_exists`, same as `ext_btree_storage_exists` for a blob.
-- `ext_blob_storage_delete`, same as `ext_btree_storage_delete` for a blob.
-- `ext_blob_storage_clone`, same as `ext_btree_storage_clone` for a blob. 
-- `ext_blob_storage_rename`, same as `ext_btree_storage_rename` for a blob. 
+- `ext_blob_storage_new`, same as `ext_ordered_map_storage_new` for a blob. 
+- `ext_blob_storage_exists`, same as `ext_ordered_map_storage_exists` for a blob.
+- `ext_blob_storage_delete`, same as `ext_ordered_map_storage_delete` for a blob.
+- `ext_blob_storage_clone`, same as `ext_ordered_map_storage_clone` for a blob. 
+- `ext_blob_storage_rename`, same as `ext_ordered_map_storage_rename` for a blob. 
 
 
 - `ext_blob_storage_set` with parameters:
@@ -282,17 +282,17 @@ An alternative would also be to return Option<`Mode`> so you can see the current
 
 - `clone` we could have a smarter implementation where we Ref count content and clone only on write.
 
-- ext_btree_storage_root32_dump and ext_btree_storage_root32_dump_hashed: I am really not sure if those should be exposed (looks more like debugging calls that should not be part of any production runtime).
+- ext_ordered_map_storage_root32_dump and ext_ordered_map_storage_root32_dump_hashed: I am really not sure if those should be exposed (looks more like debugging calls that should not be part of any production runtime).
 
-- ext_btree_storage_next_keys: Would be a good idea to pass the previous key as Option<&[u8]> so we can include the very first value. Currently value &[] need to be queried manually if it can be defined. I am not sure it is needed (and not sure if Option<&[u8]> passing efficiently is easy).
+- ext_ordered_map_storage_next_keys: Would be a good idea to pass the previous key as Option<&[u8]> so we can include the very first value. Currently value &[] need to be queried manually if it can be defined. I am not sure it is needed (and not sure if Option<&[u8]> passing efficiently is easy).
 
-- ext_btree_storage_next_keys: Maybe result should be a Vec<u8> and a Vec<u32> to avoid scale encoding (all keys in same buff and an array of key offset).
+- ext_ordered_map_storage_next_keys: Maybe result should be a Vec<u8> and a Vec<u32> to avoid scale encoding (all keys in same buff and an array of key offset).
 
-- ext_btree_storage_remove_item or ext_btree_storage_contains_item or ext_btree_storage_get_item, the result do not allow to distinguish between a non instantiated transient storage and a key not present in the storage.
+- ext_ordered_map_storage_remove_item or ext_ordered_map_storage_contains_item or ext_ordered_map_storage_get_item, the result do not allow to distinguish between a non instantiated transient storage and a key not present in the storage.
 
-- ext_btree_storage_hash32_item: in its current form (no caching), it does not provide much over just accessing content and then calling the host hash function. At this point, I would suggest removing it.
+- ext_ordered_map_storage_hash32_item: in its current form (no caching), it does not provide much over just accessing content and then calling the host hash function. At this point, I would suggest removing it.
 
-- ext_btree_storage_root32_item: the caching is rudimentary. A plain trie structure could be kept in memory for minimal work between two calls. Currently I only did cache the hash if the btree do not change.
+- ext_ordered_map_storage_root32_item: the caching is rudimentary. A plain trie structure could be kept in memory for minimal work between two calls. Currently I only did cache the hash if the ordered_map do not change.
 
 - Hash32Algorithm currently is only blake2b 256, probably need other variant to make sense, I would suggest blake3 (even if the current api is not handling its internal tree structure).
 
@@ -321,13 +321,13 @@ This force instantiating specifically. I think it is a good direction since the 
 256 byte might be way to small, probably could be pushed to 1024.
 
 - The api allow accessing more than a blob chunk at a time, the current implementation then instantiate and concat chunk, maybe being more restrictive (single chunk access) would make the impact more evident.
-For instance accessing a full blob means concatenating all chunks each time, my opinion is that if we want to cache such access a btree item can be use for it.
+For instance accessing a full blob means concatenating all chunks each time, my opinion is that if we shall not try to cache such access (for this use case ordered map entry can be use).
 
 - Instead of chunking we could store variable length diff in the transaction layer, at first glance it looks a bit less efficient to me considering access. But we could favor size and change this to works with incremental variable length diffs.
 
 - Archive storage: the default implementation for substrate is just storing and applying pruning as standard storage (same pruning range as state).
 Key for blob are `b"TransientBlobsItem" ++ block_hash ++ blob_name`.
-Key for btree items are `b"TransientBtreesItem" ++ block_hash ++ btree_name ++ btree_item_key`.
+Key for ordered map items are `b"TransientOrterdedMapItem" ++ block_hash ++ ordered_map_name ++ ordered_map_item_key`.
 Data is put in `AUX` column.
 Trait `TransientStorageHook` to allows extending or replacing this behavior (for instance to index specific items).
 This trait is usable through library dynamic linking.
