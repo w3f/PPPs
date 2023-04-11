@@ -44,10 +44,11 @@ Transient storage act as current state storage, but without a persistent backend
 This implies that the storage must support commiting and reverting transaction with `ext_storage_commit_transaction` or `ext_storage_rollback_transaction`.
 This transactional support is both at transient storage content and at transient storage definition (a delete transient storage will be restore on rollback).
 
-Ordered map and blob are using a specific `Mode`, either `drop` or `archive` passed respectively as the byte 0 or 1. When using `drop` the data will not be send from the runtime executor to the calling client. When using `archive` the committed state of the transient storage will be passed as a change set to the client calling runtime executor.
+Ordered map and blob are using a specific `Mode`, either `drop` or `archive` passed respectively as the byte 0 or 1.
 
-In archive mode it is the client that choose its strategy for storing the block transient storages final states.
+In `drop` mode the transient data is not expected to be accessed outside the current block execution. When `archive` is define, client should provide specific persistence for this data.
 
+In `archive` mode, a persistence is expected to be done by the client.
 
 ### Implementation of ordered map storage
 
@@ -97,8 +98,10 @@ This operation cost is small, there should be no copy of storage content.
 	- value : a pointer size to the value of the content to insert.
 Returns false if there is no ordered_map storage defined for this `name`, true otherwhise (success).
 
-This insert a new key value content.
+This insert a new key value content. 
 If an item already exists for the `key` it is overwritten.
+Does nothing if the ordered_map storage of this `name` doesn't exist.
+
 
 - `ext_ordered_map_storage_remove_item` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
@@ -157,7 +160,8 @@ This call is very costy. Implementation shall at least cache hash result when st
 	- key: a pointer size to the previously accessed key.
 	- count: a u32 indicating the maximum number of key to return.
 Returns a scale encoded optional sized array of keys (rust `Option<Vec<Vec<u8>>>`).
-
+Returns a SCALE-encoded `None` if there is no transient storage.
+Returns a SCALE-encoded `Some(vec![])` if the `key` is the last key or after the last key of that transient storage.
 
 - `ext_ordered_map_storage_root32_dump` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
@@ -195,6 +199,8 @@ Reason for returning false can be either no instantiated blob for `name` or an o
 When value is written on existing blob content, it overwrites it. If value is too big to be written in the blog, the blog size will increase.
 
 If final blob size is bigger than u32::max, the calls is a noops and return false.
+
+Does nothing and return false if the blob storage of this `name` doesn't exist.
 
 - `ext_blob_storage_truncate` with parameters:
 	- name : a pointer size to the name of a transient storage to rename.
