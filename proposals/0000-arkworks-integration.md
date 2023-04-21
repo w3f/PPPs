@@ -31,22 +31,16 @@ fn bls12_381_multi_miller_loop(a: Vec<Vec<u8>>, b: Vec<Vec<u8>>) -> Result<Vec<u
 fn bls12_381_final_exponentiation(f12: Vec<u8>) -> Result<Vec<u8>, ()> 
 
 /// Compute a projective multiplication on G1 for bls12_381
-fn bls12_381_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
-
-/// Compute a projective multiplication on G1 for bls12_381
-fn bls12_381_mul_affine_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+fn bls12_381_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()> 
 
 /// Compute a projective multiplication on G2 for bls12_381
-fn bls12_381_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
-
-/// Compute a affine multiplication on G2 for bls12_381
-fn bls12_381_mul_affine_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+fn bls12_381_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute a msm on G1 for bls12_381
-fn bls12_381_msm_g1(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8>
+fn bls12_381_msm_g1(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
 
 /// Compute a msm on G2 for bls12_381
-fn bls12_381_msm_g2(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8> 
+fn bls12_381_msm_g2(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()> 
 
 /// Compute a multi Miller loop for bls12_377
 fn bls12_377_multi_miller_loop(a: Vec<Vec<u8>>, b: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
@@ -55,22 +49,16 @@ fn bls12_377_multi_miller_loop(a: Vec<Vec<u8>>, b: Vec<Vec<u8>>) -> Result<Vec<u
 fn bls12_377_final_exponentiation(f12: Vec<u8>) -> Result<Vec<u8>, ()> 
 
 /// Compute a projective multiplication on G1 for bls12_377
-fn bls12_377_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
-
-/// Compute a affine multiplication on G1 for bls12_377
-fn bls12_377_mul_affine_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+fn bls12_377_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()> 
 
 /// Compute a projective multiplication on G2 for bls12_377
-fn bls12_377_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
-
-/// Compute a affine multiplication on G2 for bls12_377
-fn bls12_377_mul_affine_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+fn bls12_377_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute a msm on G1 for bls12_377
-fn bls12_377_msm_g1(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8> 
+fn bls12_377_msm_g1(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()> 
 
 /// Compute a msm on G2 for bls12_377
-fn bls12_377_msm_g2(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8> 
+fn bls12_377_msm_g2(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
 
 /// Compute a multi Miller loop on bw6_761
 fn bw6_761_multi_miller_loop(a: Vec<Vec<u8>>, b: Vec<Vec<u8>>) -> Result<Vec<u8>, ()> 
@@ -79,49 +67,34 @@ fn bw6_761_multi_miller_loop(a: Vec<Vec<u8>>, b: Vec<Vec<u8>>) -> Result<Vec<u8>
 fn bw6_761_final_exponentiation(f12: Vec<u8>) -> Result<Vec<u8>, ()> 
 
 /// Compute a projective multiplication on G1 for bw6_761
-fn bw6_761_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+fn bw6_761_mul_projective_g1(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute a projective multiplication on G2 for bw6_761
-fn bw6_761_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
-
-/// Compute a affine multiplication on G1 for bw6_761
-fn bw6_761_mul_affine_g1(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
-
-/// Compute a affine multiplication on G2 for bw6_761
-fn bw6_761_mul_affine_g2(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+fn bw6_761_mul_projective_g2(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute a msm on G1 for bw6_761
-fn bw6_761_msm_g1(bases: Vec<Vec<u8>>, bigints: Vec<Vec<u8>>) -> Vec<u8> 
+fn bw6_761_msm_g1(bases: Vec<Vec<u8>>, bigints: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
 
 /// Compute a msm on G2 for bw6_761
-fn bw6_761_msm_g2(bases: Vec<Vec<u8>>, bigints: Vec<Vec<u8>>) -> Vec<u8> 
-
-/// Compute a short weierstrass affine multiplication on ed_on_bls12_381
-fn ed_on_bls12_381_sw_mul_affine(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+fn bw6_761_msm_g2(bases: Vec<Vec<u8>>, bigints: Vec<Vec<u8>>) -> Result<Vec<u8>, ()> 
 
 /// Compute twisted edwards projective multiplication on ed_on_bls12_381
-fn ed_on_bls12_381_te_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
-
-/// Compute twisted edwards affine multiplication on ed_on_bls12_381
-fn ed_on_bls12_381_te_mul_affine(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+fn ed_on_bls12_381_te_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute short weierstrass projective multiplication on ed_on_bls12_381
-fn ed_on_bls12_381_sw_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8>
+fn ed_on_bls12_381_sw_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute twisted edwards msm on ed_on_bls12_381
-fn ed_on_bls12_381_te_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8>
+fn ed_on_bls12_381_te_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
 
 /// Compute short weierstrass msm on ed_on_bls12_381
-fn ed_on_bls12_381_sw_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8> 
-
-/// Compute affine multiplication on ed_on_bls12_377
-fn ed_on_bls12_377_mul_affine(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+fn ed_on_bls12_381_sw_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
 
 /// Compute projective multiplication on ed_on_bls12_377
-fn ed_on_bls12_377_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Vec<u8> 
+fn ed_on_bls12_377_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute msm on ed_on_bls12_377
-fn ed_on_bls12_377_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Vec<u8>
+fn ed_on_bls12_377_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
 ```
 
 While the host-functions themself are implemented under `/primitives/io/src/lib.rs`, they call into their actual implementations which can be found in the `/primitives/io/arkworks` sub-crate.
