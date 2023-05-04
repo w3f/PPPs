@@ -17,7 +17,7 @@ Replaces:
 Usually cryptographic operations on elliptic curves are slow in WebAssembly. Replacing those operations by host functoin calls into binary code allows us to drastically improve the performace of the cryptographic tools which rely on those operations.
 
 ## Detailed Solution design
-We implement host function calls into the underlying arithmetic operations on elliptic curves for `BLS12_377`, `BLS12_381`, `BW6_761`, `ED_ON_BLS12_377` and `ED_ON_BLS12_381` by host function calls.
+We implement host function calls into the underlying arithmetic operations on elliptic curves for `BLS12_377`, `BLS12_381`, `BW6_761`, `ED_ON_BLS12_377` and `ED_ON_BLS12_381_BANDERSNATCH` by host function calls.
 
 We introduce new host functions calls which are grouped under `elliptic_curves` in `/primitives/io/src/lib.rs`. Those host function calls receive serialized curve points of elliptic curves, deserialize them, call into native arkworks code to perform computations. Finally they serialize the result and return them as `Vec<u8>`.
 
@@ -79,16 +79,16 @@ fn bw6_761_msm_g1(bases: Vec<Vec<u8>>, bigints: Vec<Vec<u8>>) -> Result<Vec<u8>,
 fn bw6_761_msm_g2(bases: Vec<Vec<u8>>, bigints: Vec<Vec<u8>>) -> Result<Vec<u8>, ()> 
 
 /// Compute twisted edwards projective multiplication on ed_on_bls12_381
-fn ed_on_bls12_381_te_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
+fn ed_on_bls12_381_bandersnatch_te_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute short weierstrass projective multiplication on ed_on_bls12_381
 fn ed_on_bls12_381_sw_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
 
 /// Compute twisted edwards msm on ed_on_bls12_381
-fn ed_on_bls12_381_te_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
+fn ed_on_bls12_381_bandersnatch_te_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
 
 /// Compute short weierstrass msm on ed_on_bls12_381
-fn ed_on_bls12_381_sw_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
+fn ed_on_bls12_381_bandersnatch_sw_msm(bases: Vec<Vec<u8>>, scalars: Vec<Vec<u8>>) -> Result<Vec<u8>, ()>
 
 /// Compute projective multiplication on ed_on_bls12_377
 fn ed_on_bls12_377_mul_projective(base: Vec<u8>, scalar: Vec<u8>) -> Result<Vec<u8>, ()>
